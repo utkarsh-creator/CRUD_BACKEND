@@ -6,11 +6,13 @@ import lombok.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")  // Make sure this matches your database schema
+@Table(name = "users")  // Ensure table name matches schema.sql
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "roles") // Prevents infinite loops
+@EqualsAndHashCode(exclude = "roles") // Prevents stack overflow in collections
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +21,13 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(unique = true, nullable = false) // ✅ Added email field
+    private String email;
+
+    @Column(nullable = false) // ✅ Ensures password is not null
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER) // ✅ Use LAZY to improve performance
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -19,15 +19,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // ✅ Create a user with encrypted password
     public User saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    // ✅ Get user by ID
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
     }
 
+    // ✅ Get all users with pagination, sorting, and optional search
     public Page<User> getAllUsers(int page, int size, String sortBy, String order, String search) {
         Sort sort = order.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -39,7 +42,35 @@ public class UserService {
         return userRepository.findAll(pageable);
     }
 
+    // ✅ Update user (PUT - full update)
+    public User updateUser(Long id, User updatedUser) {
+        return userRepository.findById(id).map(user -> {
+            user.setUsername(updatedUser.getUsername());
+            user.setEmail(updatedUser.getEmail());
+            if (!updatedUser.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            }
+            return userRepository.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // ✅ Partial update user (PATCH - only update provided fields)
+    public User partialUpdateUser(Long id, User updatedUser) {
+        return userRepository.findById(id).map(user -> {
+            if (updatedUser.getUsername() != null) user.setUsername(updatedUser.getUsername());
+            if (updatedUser.getEmail() != null) user.setEmail(updatedUser.getEmail());
+            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            }
+            return userRepository.save(user);
+        }).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // ✅ Delete user by ID
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found");
+        }
         userRepository.deleteById(id);
     }
 }

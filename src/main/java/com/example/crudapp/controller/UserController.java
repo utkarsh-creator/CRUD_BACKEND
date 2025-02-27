@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -15,11 +17,13 @@ public class UserController {
 
     private final UserService userService;
 
+    // ✅ Create a new user
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.saveUser(user));
     }
 
+    // ✅ Get all users with pagination, sorting, and search
     @GetMapping
     public ResponseEntity<Page<User>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
@@ -31,6 +35,26 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers(page, size, sortBy, order, search));
     }
 
+    // ✅ Get a user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        Optional<User> user = userService.getUserById(id);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // ✅ Update a user (Full update with PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.updateUser(id, user));
+    }
+
+    // ✅ Partial update (PATCH)
+    @PatchMapping("/{id}")
+    public ResponseEntity<User> partialUpdateUser(@PathVariable Long id, @RequestBody User user) {
+        return ResponseEntity.ok(userService.partialUpdateUser(id, user));
+    }
+
+    // ✅ Delete a user
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
