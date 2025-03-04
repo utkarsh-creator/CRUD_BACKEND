@@ -26,16 +26,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        Set<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toSet());
-
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
-                user.getPassword(), // ✅ Should return the already hashed password
-                authorities
+                user.getPassword(), // Ensure this is the hashed password
+                user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+                        .collect(Collectors.toList())
         );
     }
-
-
 }

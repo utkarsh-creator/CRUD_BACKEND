@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "your-very-secret-key-your-very-secret-key"; // Replace with a secure key
+    private static final String SECRET_KEY = "a1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6q7R8s9T0u1V2w3X4y5Z6"; // Replace with a secure key
 
     // ✅ Extract JWT from request headers
     public String extractJwtFromRequest(HttpServletRequest request) {

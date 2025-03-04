@@ -1,6 +1,16 @@
+-- Drop tables if they exist (to avoid conflicts during application startup)
 DROP TABLE IF EXISTS user_roles;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS products;
+
+-- Create Products Table
+CREATE TABLE products (
+                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                          name VARCHAR(255) NOT NULL,
+                          price DOUBLE NOT NULL,
+                          quantity INT NOT NULL
+);
 
 -- Create Roles Table
 CREATE TABLE roles (

@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
+    boolean existsByUsername(String username);
 
+    // ✅ Add this method for searching users by username (case-insensitive)
     Page<User> findByUsernameContainingIgnoreCase(String username, Pageable pageable);
 }

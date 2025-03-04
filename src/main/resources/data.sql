@@ -1,6 +1,6 @@
 -- Insert Roles
-INSERT INTO roles (id, name) VALUES (1, 'ROLE_ADMIN');
-INSERT INTO roles (id, name) VALUES (2, 'ROLE_USER');
+INSERT INTO roles (id, name) VALUES (1, 'ROLE_ADMIN'); -- Admin role
+INSERT INTO roles (id, name) VALUES (2, 'ROLE_USER'); -- User role
 
 -- Insert Users with Email
 INSERT INTO users (username, email, password) VALUES
@@ -10,3 +10,9 @@ INSERT INTO users (username, email, password) VALUES
 -- Assign Roles to Users
 INSERT INTO user_roles (user_id, role_id) VALUES (1, 1); -- Admin user gets ROLE_ADMIN
 INSERT INTO user_roles (user_id, role_id) VALUES (2, 2); -- Normal user gets ROLE_USER
+
+-- Insert Sample Products
+INSERT INTO products (name, price, quantity) VALUES
+                                                 ('Product 1', 10.99, 100),
+                                                 ('Product 2', 20.99, 50),
+                                                 ('Product 3', 30.99, 75);

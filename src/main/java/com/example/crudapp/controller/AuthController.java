@@ -1,8 +1,11 @@
 package com.example.crudapp.controller;
 
 import com.example.crudapp.dto.AuthRequest;
+import com.example.crudapp.dto.RegisterRequest;
+import com.example.crudapp.model.User;
 import com.example.crudapp.security.JwtUtil;
 import com.example.crudapp.service.CustomUserDetailsService;
+import com.example.crudapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,8 +19,22 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final UserService userService; // Inject UserService
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        // Convert RegisterRequest DTO to User entity
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        user.setEmail(request.getEmail());
+
+        // Call the UserService to save the user
+        userService.registerUser(user);
+        return ResponseEntity.ok("User registered successfully");
+    }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody AuthRequest authRequest) {

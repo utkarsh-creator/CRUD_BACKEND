@@ -1,6 +1,9 @@
 package com.example.crudapp.service;
 
+import com.example.crudapp.dto.RegisterRequest;
+import com.example.crudapp.model.Role;
 import com.example.crudapp.model.User;
+import com.example.crudapp.repository.RoleRepository;
 import com.example.crudapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,19 +14,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // ✅ Create a user with encrypted password
-    public User saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    // ✅ Register a new user
+    public User registerUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new RuntimeException("User already exists");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash password
         return userRepository.save(user);
     }
+
 
     // ✅ Get user by ID
     public Optional<User> getUserById(Long id) {
@@ -73,4 +82,12 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+    public User saveUser(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new RuntimeException("Username already taken");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
 }
