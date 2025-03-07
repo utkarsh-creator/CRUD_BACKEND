@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "a1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6q7R8s9T0u1V2w3X4y5Z6"; // Replace with a secure key
+    private static final String SECRET_KEY = "YTFCMmMzRDRlNUY2ZzdIOGk5SjBrMUwyTTNONG81UDZxN1I4czlUMHUxVjJ3M1g0eTVaNg=="; // Base64 encoded
 
     // ✅ Extract JWT from request headers
     public String extractJwtFromRequest(HttpServletRequest request) {
@@ -34,10 +34,11 @@ public class JwtUtil {
     }
 
     // ✅ Validate JWT Token
-    public boolean validateToken(String token) {
-        return !isTokenExpired(token);
+// In JwtUtil class
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
-
     // ✅ Check if Token is Valid for User
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String username = extractUsername(token);
@@ -87,7 +88,7 @@ public class JwtUtil {
 
     // ✅ Get Signing Key
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = SECRET_KEY.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

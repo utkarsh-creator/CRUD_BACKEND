@@ -1,4 +1,6 @@
 package com.example.crudapp.service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import com.example.crudapp.dto.RegisterRequest;
 import com.example.crudapp.model.Role;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,12 +28,27 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     // ✅ Register a new user
-    public User registerUser(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("User already exists");
+    public User registerUser(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exists");
+
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash password
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // Hash password
+        if (user.getRoles() == null) {
+            user.setRoles(new HashSet<>());
+        }
+
+        // Get user role
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        // Add role to user
+        user.getRoles().add(userRole);
         return userRepository.save(user);
+        // return userRepository.save(user);
     }
 
 
@@ -82,12 +100,9 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
-    public User saveUser(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username already taken");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+    public User saveUser(RegisterRequest request) {
+        return registerUser(request);
     }
+
 
 }
