@@ -1,5 +1,6 @@
 package com.example.crudapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,11 +17,14 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore  // Prevent circular reference issues
     private Order order;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
-    private int quantity;
+    private Integer quantity;  // Changed from int to Integer for database consistency
+
+    private Double price;  // Added price field to store the product's price at the time of order
 }

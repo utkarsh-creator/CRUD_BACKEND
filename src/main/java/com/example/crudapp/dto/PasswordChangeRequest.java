@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderItemDTO {
-    private Long productId;  // ✅ Identifies which product
-    private Integer quantity;  // ✅ Tracks how many units
+public class PasswordChangeRequest {
+    private String currentPassword;
+    private String newPassword;
 }

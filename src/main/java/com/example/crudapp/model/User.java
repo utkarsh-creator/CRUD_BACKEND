@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -12,8 +13,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "roles") // Prevents infinite loops
-@EqualsAndHashCode(exclude = "roles") // Prevents stack overflow in collections
+@ToString(exclude = {"roles", "orders"}) // Prevents infinite loops
+@EqualsAndHashCode(exclude = {"roles", "orders"}) // Prevents stack overflow in collections
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,17 +23,25 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true, nullable = false) // ✅ Added email field
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false) // ✅ Ensures password is not null
+    @Column(nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER) // ✅ Use LAZY to improve performance
+    private String firstName;  // ✅ Added missing field
+    private String lastName;   // ✅ Added missing field
+    private String address;    // ✅ Added missing field
+    private String phone;      // ✅ Added missing field
+
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();;
+    private Set<Role> roles = new HashSet<>();  // Ensures roles is never null
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders; // Tracks orders made by user
 }

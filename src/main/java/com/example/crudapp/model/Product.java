@@ -3,6 +3,9 @@ package com.example.crudapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -17,9 +20,15 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
+    private String description; // Added for product details
+
     @Column(nullable = false)
     private double price;
 
     @Column(nullable = false)
-    private int quantity; // ✅ Stock tracking
+    private int stockQuantity; // Renamed for clarity
+
+    @ManyToMany(mappedBy = "products")
+    private Set<Order> orders = new HashSet<>();
+
 }
