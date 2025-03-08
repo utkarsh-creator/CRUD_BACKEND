@@ -1,6 +1,7 @@
 package com.example.crudapp.service;
 
 import com.example.crudapp.dto.RegisterRequest;
+import com.example.crudapp.dto.UserDTO;
 import com.example.crudapp.dto.UserProfileDTO;
 import com.example.crudapp.exception.ResourceNotFoundException;
 import com.example.crudapp.model.Role;
@@ -63,6 +64,19 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers(int page, int limit) {
         return userRepository.findAll(PageRequest.of(page, limit)).getContent();
     }
+
+    @Override
+    public User updateUser(Long id, UserDTO userDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+
+        User updatedUser = userRepository.save(user);
+        return updatedUser;
+    }
+
 
     @Override
     @Transactional

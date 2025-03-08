@@ -24,5 +24,5 @@ public class ProductDTO {
 
     @NotNull(message = "Stock quantity is required")
     @Positive(message = "Stock quantity must be positive")
-    private int stockQuantity; // Added stock quantity validation
+    private Integer stockQuantity; // Added stock quantity validation
 }

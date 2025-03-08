@@ -1,5 +1,6 @@
 package com.example.crudapp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,7 @@ public class Order {
     private Double totalAmount; // Changed from `double` to `Double` for better database consistency
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<OrderItem> items = new ArrayList<>(); // Ensuring proper bidirectional mapping
 
     @ManyToMany

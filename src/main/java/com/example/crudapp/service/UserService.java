@@ -1,6 +1,7 @@
 package com.example.crudapp.service;
 
 import com.example.crudapp.dto.RegisterRequest;
+import com.example.crudapp.dto.UserDTO;
 import com.example.crudapp.dto.UserProfileDTO;
 import com.example.crudapp.model.User;
 
@@ -15,6 +16,7 @@ public interface UserService {
     List<User> getAllUsers(int page, int limit);
 
     User updateUserProfile(Long id, UserProfileDTO profileData);
+    User updateUser(Long id, UserDTO userDTO);
 
     void changeUserPassword(Long id, String currentPassword, String newPassword);
 

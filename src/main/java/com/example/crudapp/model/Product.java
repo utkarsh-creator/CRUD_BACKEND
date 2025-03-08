@@ -26,7 +26,7 @@ public class Product {
     private double price;
 
     @Column(nullable = false)
-    private int stockQuantity; // Renamed for clarity
+    private Integer stockQuantity; // Renamed for clarity
 
     @ManyToMany(mappedBy = "products")
     private Set<Order> orders = new HashSet<>();

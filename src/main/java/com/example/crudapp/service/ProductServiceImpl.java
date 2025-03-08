@@ -1,4 +1,4 @@
-package com.example.crudapp.service.impl;
+package com.example.crudapp.service;
 
 import com.example.crudapp.dto.ProductDTO;
 import com.example.crudapp.exception.ResourceNotFoundException;
@@ -49,10 +49,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDTO createProduct(ProductDTO productDTO) {
-        Product product = convertToEntity(productDTO);
+        if (productDTO.getStockQuantity() == null) { // ✅ Prevent null values
+            productDTO.setStockQuantity(10); // Default value
+        }
+
+        Product product = new Product();
+        product.setName(productDTO.getName());
+        product.setDescription(productDTO.getDescription());
+        product.setPrice(productDTO.getPrice());
+        product.setStockQuantity(productDTO.getStockQuantity()); // ✅ Ensure value is set
+
         Product savedProduct = productRepository.save(product);
         return convertToDTO(savedProduct);
     }
+
+
 
     @Override
     @Transactional
@@ -61,12 +72,20 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
 
         existingProduct.setName(productDTO.getName());
+        existingProduct.setDescription(productDTO.getDescription());
         existingProduct.setPrice(productDTO.getPrice());
-        existingProduct.setStockQuantity(productDTO.getStockQuantity());
+
+        // ✅ Set default stockQuantity if it's missing
+        if (productDTO.getStockQuantity() != null) {
+            existingProduct.setStockQuantity(productDTO.getStockQuantity());
+        } else {
+            existingProduct.setStockQuantity(existingProduct.getStockQuantity()); // Keep old value
+        }
 
         Product updatedProduct = productRepository.save(existingProduct);
         return convertToDTO(updatedProduct);
     }
+
 
     @Override
     @Transactional
@@ -107,7 +126,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = new Product();
         product.setName(productDTO.getName());
         product.setPrice(productDTO.getPrice());
-        product.setStockQuantity(productDTO.getStockQuantity());
+        product.setStockQuantity(productDTO.getStockQuantity() != null ? productDTO.getStockQuantity() : 10);
         return product;
     }
 }

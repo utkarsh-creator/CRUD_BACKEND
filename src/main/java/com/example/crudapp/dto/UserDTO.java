@@ -3,9 +3,11 @@ package com.example.crudapp.dto;
 import com.example.crudapp.model.Role;
 import com.example.crudapp.model.User;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Set;
 import java.util.stream.Collectors;
-
+@NoArgsConstructor
 @Data
 public class UserDTO {
     private Long id;

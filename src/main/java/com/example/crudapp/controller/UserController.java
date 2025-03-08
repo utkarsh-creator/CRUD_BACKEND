@@ -136,6 +136,18 @@ public class UserController {
         return ResponseEntity.ok(orders);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #userDetails.username == @userService.getUserById(#id).orElse(null)?.username")
+    public ResponseEntity<UserDTO> updateUser(
+            @PathVariable Long id,
+            @RequestBody UserDTO userDTO,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        User updatedUser = userService.updateUser(id, userDTO);
+        return ResponseEntity.ok(new UserDTO(updatedUser));
+    }
+
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {

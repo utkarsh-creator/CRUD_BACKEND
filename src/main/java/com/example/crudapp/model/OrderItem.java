@@ -1,5 +1,6 @@
 package com.example.crudapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
-    @JsonIgnore  // Prevent circular reference issues
+    @JsonBackReference
     private Order order;
 
     @ManyToOne
