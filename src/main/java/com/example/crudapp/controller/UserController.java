@@ -75,6 +75,13 @@ public class UserController {
         return ResponseEntity.ok(new UserDTO(registeredUser));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return userService.getUserByUsername(userDetails.getUsername())
+                .map(user -> ResponseEntity.ok(new UserDTO(user)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers(

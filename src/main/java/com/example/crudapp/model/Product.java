@@ -1,9 +1,12 @@
 package com.example.crudapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,6 +32,7 @@ public class Product {
     private Integer stockQuantity; // Renamed for clarity
 
     @ManyToMany(mappedBy = "products")
-    private Set<Order> orders = new HashSet<>();
+    @JsonIgnore // Prevent recursion
+    private List<Order> orders = new ArrayList<>();
 
 }

@@ -1,5 +1,6 @@
 package com.example.crudapp.security;
 
+import com.example.crudapp.service.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -54,7 +55,7 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    // ✅ Generate JWT Token with Roles
+//     ✅ Generate JWT Token with Roles
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
@@ -66,6 +67,10 @@ public class JwtUtil {
 
         return createToken(claims, userDetails.getUsername());
     }
+
+
+
+
 
     // ✅ Create JWT Token
     private String createToken(Map<String, Object> claims, String subject) {

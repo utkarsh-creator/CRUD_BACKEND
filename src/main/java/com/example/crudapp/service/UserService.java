@@ -10,17 +10,12 @@ import java.util.Optional;
 
 public interface UserService {
     User registerUser(RegisterRequest registerRequest);
-
     Optional<User> getUserById(Long id);
-
+    Optional<User> getUserByUsername(String username);
     List<User> getAllUsers(int page, int limit);
-
-    User updateUserProfile(Long id, UserProfileDTO profileData);
     User updateUser(Long id, UserDTO userDTO);
-
+    User updateUserProfile(Long id, UserProfileDTO profileData);
     void changeUserPassword(Long id, String currentPassword, String newPassword);
-
     User updateUserRole(Long id, String role);
-
     void deleteUser(Long id);
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDTO {
-    private Long userId;  // ✅ Link order to a specific user
+    private String username;  // ✅ Link order to a specific user
     private List<OrderItemDTO> items;  // ✅ Renamed for consistency
     private double totalAmount;  // ✅ Ensures total price tracking
 }

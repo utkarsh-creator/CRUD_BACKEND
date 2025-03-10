@@ -17,15 +17,14 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    @JsonBackReference
+    @JoinColumn(name = "order_id", nullable = false)
+    @JsonIgnore // Prevents infinite recursion
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private Integer quantity;  // Changed from int to Integer for database consistency
-
-    private Double price;  // Added price field to store the product's price at the time of order
+    private int quantity;
+    private Double price;
 }

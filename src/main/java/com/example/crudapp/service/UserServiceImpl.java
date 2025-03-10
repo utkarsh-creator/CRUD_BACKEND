@@ -8,7 +8,6 @@ import com.example.crudapp.model.Role;
 import com.example.crudapp.model.User;
 import com.example.crudapp.repository.RoleRepository;
 import com.example.crudapp.repository.UserRepository;
-import com.example.crudapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,6 +57,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
+    }
+
+    @Override
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
