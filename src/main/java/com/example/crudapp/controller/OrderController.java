@@ -45,6 +45,7 @@
 package com.example.crudapp.controller;
 
 import com.example.crudapp.dto.OrderDTO;
+import com.example.crudapp.dto.OrderItemDTO;
 import com.example.crudapp.model.Order;
 import com.example.crudapp.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -63,7 +65,8 @@ import java.util.Map;
 public class OrderController {
 
     private final OrderService orderService;
-
+//    @Autowired
+//    private final OrderMapper orderMapper;
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Order> placeOrder(
@@ -73,9 +76,21 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.getOrderById(id));
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
+        Order order = orderService.getOrderById(id);
+
+        // Extract username from User object
+        String username = order.getUser().getUsername();
+
+        // Convert order items to DTOs using the correct constructor
+        List<OrderItemDTO> orderItems = order.getItems().stream()
+                .map(item -> new OrderItemDTO(item.getId(), item.getQuantity())) // ✅ Match expected parameters
+                .collect(Collectors.toList());
+
+        // Create an OrderDTO using the correct constructor
+        OrderDTO orderDTO = new OrderDTO(username, orderItems, order.getTotalAmount());
+
+        return ResponseEntity.ok(orderDTO);
     }
 
     // ✅ ADDED: Pagination support for order retrieval
@@ -95,6 +110,8 @@ public class OrderController {
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
     }
+
+
 
     // ✅ ADDED: Update order status (Admin only)
     @PatchMapping("/{id}/status")
