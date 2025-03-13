@@ -251,6 +251,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // ✅ Make session stateless
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/orders/user/**").authenticated()
                         .requestMatchers("/login", "/register").permitAll()
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()

@@ -93,24 +93,31 @@ public class OrderController {
         return ResponseEntity.ok(orderDTO);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Order>> getOrdersByUserId(@PathVariable Long userId) {
+        List<Order> userOrders = orderService.findByUserId(userId);
+        return ResponseEntity.ok(userOrders);
+    }
+
     // ✅ ADDED: Pagination support for order retrieval
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Order>> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
+
             @RequestParam(defaultValue = "10") int limit) {
         return ResponseEntity.ok(orderService.getAllOrders(page, limit));
     }
 
     // ✅ ADDED: Fetch orders by user ID (Admin & Order Owner)
-    @GetMapping("/user/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or #userDetails.username == @userService.getUserById(#userId).get().username")
-    public ResponseEntity<List<Order>> getOrdersByUserId(
-            @PathVariable Long userId,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
-    }
-
+//    @GetMapping("/{userId}")
+//    @PreAuthorize("hasRole('ADMIN') or #userDetails.username == @userService.getUserById(#userId).get().username")
+//    public ResponseEntity<List<Order>> getOrdersByUserId(
+//            @PathVariable Long userId,
+//            @AuthenticationPrincipal UserDetails userDetails) {
+//        return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+//    }
+//
 
 
     // ✅ ADDED: Update order status (Admin only)
@@ -129,6 +136,10 @@ public class OrderController {
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(orderService.cancelOrder(id));
+    }
+    @GetMapping("/my-orders")
+    public ResponseEntity<List<Order>> getCurrentUserOrders() {
+        return ResponseEntity.ok(orderService.getCurrentUserOrders());
     }
 
     @DeleteMapping("/{id}")

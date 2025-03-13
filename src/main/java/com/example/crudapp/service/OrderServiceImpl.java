@@ -180,7 +180,7 @@
 //        }
 //    }
 //}
-package com.example.crudapp.service.impl;
+package com.example.crudapp.service;
 
 import com.example.crudapp.dto.OrderDTO;
 import com.example.crudapp.exception.ResourceNotFoundException;
@@ -198,6 +198,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -210,7 +211,11 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
-
+    // Add this method to your OrderServiceImpl class
+    @Override
+    public List<Order> findByUserId(Long userId) {
+        return orderRepository.findByUserId(userId);
+    }
     @Override
     @Transactional
     public Order createOrder(OrderDTO orderDTO) {
@@ -252,8 +257,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrderById(Long id) {
-        return orderRepository.findById(id)
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + id));
+
+        // Get current authenticated user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Check if order belongs to the current user (unless user is admin)
+        if (!order.getUser().getUsername().equals(username) &&
+                !SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new AccessDeniedException("You do not have permission to access this order");
+        }
+
+        return order;
     }
 
     @Override
@@ -329,7 +346,15 @@ public class OrderServiceImpl implements OrderService {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         return orderOptional.map(order -> order.getUser().getUsername().equals(username)).orElse(false);
     }
+    @Override
+    public List<Order> getCurrentUserOrders() {
+        // Get current authenticated user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        return orderRepository.findByUser(user);
+    }
     // Helper methods
     private double calculateTotalAmount(OrderDTO orderDTO) {
         return orderDTO.getItems().stream()

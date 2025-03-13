@@ -4,11 +4,14 @@ import com.example.crudapp.dto.RegisterRequest;
 import com.example.crudapp.dto.UserDTO;
 import com.example.crudapp.dto.UserProfileDTO;
 import com.example.crudapp.exception.ResourceNotFoundException;
+import com.example.crudapp.model.Order;
 import com.example.crudapp.model.Role;
 import com.example.crudapp.model.User;
+import com.example.crudapp.repository.OrderRepository;
 import com.example.crudapp.repository.RoleRepository;
 import com.example.crudapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private OrderService orderService;
+
 
     @Override
     @Transactional
@@ -135,11 +141,19 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+
     @Override
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         userRepository.delete(user);
+    }
+
+    // In UserServiceImpl.java
+    @Override
+    public List<Order> findOrdersByUserId(Long userId) {
+        // Implementation here
+        return orderService.findByUserId(userId);
     }
 }
