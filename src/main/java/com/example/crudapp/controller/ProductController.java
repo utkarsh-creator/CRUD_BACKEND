@@ -110,3 +110,32 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 }
+//ProductController
+//This controller manages products at the /api/products endpoint:
+//
+//Get All Products (GET /api/products): Retrieves products with pagination
+//
+//Supports pagination with page and size parameters
+//
+//
+//Search Products (GET /api/products/search): Searches products by query
+//
+//Takes search query and pagination parameters
+//
+//
+//Get Product by ID (GET /api/products/{id}): Retrieves a specific product
+//Create Product (POST /api/products): Creates a new product
+//
+//Admin-only endpoint
+//Takes product data in a ProductDTO
+//
+//
+//Update Product (PUT /api/products/{id}): Updates a product
+//
+//Admin-only endpoint
+//Takes product data in a ProductDTO
+//
+//
+//Delete Product (DELETE /api/products/{id}): Removes a product
+//
+//Admin-only endpoint

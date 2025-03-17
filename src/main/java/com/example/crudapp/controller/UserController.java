@@ -171,3 +171,58 @@ public class UserController {
         return ResponseEntity.ok(new UserDTO(updatedUser));
     }
 }
+
+//UserController
+//This controller handles user management at the /api/users endpoint:
+//
+//Register User (POST /api/users/register): Creates a new user
+//
+//Takes registration data in a RegisterRequest
+//Returns user data in a UserDTO
+//
+//
+//Get Current User (GET /api/users/me): Gets the logged-in user's information
+//Get All Users (GET /api/users): Retrieves all users with pagination
+//
+//Admin-only endpoint
+//Supports pagination with page and limit parameters
+//
+//
+//Get User by ID (GET /api/users/{id}): Gets a specific user
+//
+//Available to admins and the user themselves
+//
+//
+//Get User Profile (GET /api/users/{id}/profile): Gets a user's profile
+//
+//Available to admins and the user themselves
+//
+//
+//Update User Profile (PUT /api/users/{id}/profile): Updates a user's profile
+//
+//Available to admins and the user themselves
+//
+//
+//Change Password (PUT /api/users/{id}/password): Changes a user's password
+//
+//Available to admins and the user themselves
+//
+//
+//Get User Orders (GET /api/users/{id}/orders): Gets a user's orders
+//
+//Available to admins and the user themselves
+//
+//
+//Update User (PUT /api/users/{id}): Updates a user
+//
+//Available to admins and the user themselves
+//
+//
+//Delete User (DELETE /api/users/{id}): Removes a user
+//
+//Admin-only endpoint
+//
+//
+//Update User Role (PATCH /api/users/{id}/role): Changes a user's role
+//
+//Admin-only endpoint

@@ -304,3 +304,45 @@ public class SecurityConfig {
     }
 
 }
+
+//
+//This class secures your API using Spring Security.
+//It enforces authentication, role-based access control, and JWT-based security.
+
+//User Authentication Setup
+//CustomUserDetailsService loads user details (from a database or in-memory).
+//JwtAuthenticationFilter processes JWT authentication.
+//BCryptPasswordEncoder hashes passwords securely.
+//DaoAuthenticationProvider handles user authentication.
+
+//Security Rules
+//@EnableWebSecurity activates Spring Security.
+//@EnableMethodSecurity(prePostEnabled = true) enables security at the method level.
+//securityFilterChain(http) configures:
+    //CORS (applies the CORS rules).
+    //CSRF Disabled (since JWT is used, CSRF protection is disabled).
+    //Session Management (SessionCreationPolicy.STATELESS ensures API remains stateless).
+    //Access Control Rules:
+        //Public access (permitAll()): /, /login, /register, /api/auth/**, /h2-console/**
+        // Authenticated access (authenticated()): /api/orders/user/**
+        // Role-based access (hasRole(), hasAnyRole()):
+            // /api/products/**, /api/orders/**: Only for ADMIN and USER
+            // /api/users/**: Only for ADMIN
+
+// Exception Handling:
+    // If authentication fails, it returns a 401 Unauthorized response.
+
+// CORS Configuration for Security
+// corsConfigurationSource() defines allowed origins, methods, and headers.
+// HttpFirewall is configured to allow only specific HTTP methods.
+
+// JWT Integration
+// jwtAuthenticationFilter is added before UsernamePasswordAuthenticationFilter, ensuring JWT tokens are processed before user authentication.
+
+
+
+//@Bean is used to define and manage Spring-managed objects
+//It tells Spring that a method annotated with @Bean will return an object that should be registered in the Spring Application Context
+
+//@Autowired
+//Spring finds the @Bean defined in SecurityConfig and injects it.

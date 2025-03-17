@@ -149,3 +149,41 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 }
+//
+//This controller handles order management at the /api/orders endpoint:
+//
+//Create Order (POST /api/orders): Creates a new order
+//
+//Requires 'ADMIN' or 'USER' role
+//Takes order data in an OrderDTO
+//Uses OrderService to process the order
+//
+//
+//Get Order by ID (GET /api/orders/{id}): Retrieves specific order
+//
+//Returns order details converted to OrderDTO
+//
+//
+//Get Orders by User ID (GET /api/orders/user/{userId}): Gets all orders for a specific user
+//Get All Orders (GET /api/orders): Retrieves all orders with pagination
+//
+//Admin-only endpoint
+//Supports pagination with page and limit parameters
+//
+//
+//Update Order Status (PATCH /api/orders/{id}/status): Changes order status
+//
+//Admin-only endpoint
+//Takes status data in request body
+//
+//
+//Cancel Order (POST /api/orders/{id}/cancel): Cancels an order
+//
+//Available to admins and the order owner
+//Uses order service to cancel the order
+//
+//
+//Get Current User Orders (GET /api/orders/my-orders): Gets orders for the logged-in user
+//Delete Order (DELETE /api/orders/{id}): Removes an order
+//
+//Admin-only endpoint

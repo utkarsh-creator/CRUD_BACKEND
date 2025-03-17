@@ -26,3 +26,9 @@ public class LoggingAspect {
         logger.info("Service method executed successfully.");
     }
 }
+
+
+//@Aspect makes this class an Aspect, meaning it runs additional code before/after method execution.
+//@Pointcut("execution(* com.example.crudapp.service.*.*(..))") defines a pattern to match all methods inside service classes.
+//@Before logs a message before method execution.
+//@AfterReturning logs a message after method execution.

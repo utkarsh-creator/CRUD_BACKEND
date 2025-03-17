@@ -13,3 +13,17 @@ public class OrderDTO {
     private List<OrderItemDTO> items;  // ✅ Renamed for consistency
     private double totalAmount;  // ✅ Ensures total price tracking
 }
+
+//OrderDTO
+//
+//Purpose: Represents order data for API requests/responses
+//Fields:
+//
+//username: Identifies which user placed the order
+//items: List of items in the order
+//totalAmount: Total cost of the order
+//
+//
+//Notes: Designed to track who placed an order and its total cost
+
+

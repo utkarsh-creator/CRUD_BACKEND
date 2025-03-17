@@ -30,3 +30,17 @@ public class UserDTO {
         this.roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
     }
 }
+
+
+//UserDTO
+//
+//Purpose: Comprehensive user information for API responses
+//Fields:
+//
+//Basic info: id, username, email
+//Personal details: firstName, lastName, address, phone
+//Security: roles (Set of role names)
+//
+//
+//Constructor: Converts a User entity to a DTO, mapping all fields
+//Used for: User profile management and admin user listings

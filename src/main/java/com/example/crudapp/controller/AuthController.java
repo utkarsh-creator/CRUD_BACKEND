@@ -82,3 +82,25 @@ public class AuthController {
         return ResponseEntity.ok("Token is valid");
     }
 }
+
+//
+//AuthController
+//This controller manages authentication at the /api/auth endpoint:
+//
+//Registration (/register): Creates new user accounts
+//
+//Takes a RegisterRequest object with username, password, and email
+//Encodes the password using a password encoder
+//Saves the user via the UserService
+//Generates a JWT token and returns it in the response
+//
+//
+//Login (/login): Authenticates existing users
+//
+//Takes username and password
+//Uses Spring's AuthenticationManager to verify credentials
+//Generates a JWT token for authenticated users
+//Returns the token in the response
+//
+//
+//Token Validation (/validate): Simple endpoint to verify token validity
