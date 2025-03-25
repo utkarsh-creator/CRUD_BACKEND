@@ -183,16 +183,16 @@
 package com.example.crudapp.service;
 
 import com.example.crudapp.dto.OrderDTO;
+import com.example.crudapp.dto.NotificationDTO;
 import com.example.crudapp.exception.ResourceNotFoundException;
-import com.example.crudapp.model.Order;
-import com.example.crudapp.model.OrderItem;
-import com.example.crudapp.model.Product;
-import com.example.crudapp.model.User;
+import com.example.crudapp.model.*;
+import com.example.crudapp.repository.NotificationRepository;
 import com.example.crudapp.repository.OrderRepository;
 import com.example.crudapp.repository.ProductRepository;
 import com.example.crudapp.repository.UserRepository;
 import com.example.crudapp.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -211,11 +211,15 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
-    // Add this method to your OrderServiceImpl class
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     @Override
     public List<Order> findByUserId(Long userId) {
         return orderRepository.findByUserId(userId);
     }
+
     @Override
     @Transactional
     public Order createOrder(OrderDTO orderDTO) {
@@ -237,13 +241,7 @@ public class OrderServiceImpl implements OrderService {
                     Product product = productRepository.findById(item.getProductId())
                             .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + item.getProductId()));
 
-                    // Check if sufficient stock is available
-                    if (product.getStockQuantity() < item.getQuantity()) {
-                        throw new IllegalStateException("Insufficient stock for product: " + product.getName()
-                                + ". Available: " + product.getStockQuantity() + ", Requested: " + item.getQuantity());
-                    }
-
-                    // Update product stock
+                    // Update product stock (allowing negative values)
                     product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
                     productRepository.save(product);
 
@@ -342,10 +340,41 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
+    public void notifyUser(Long userId, NotificationDTO notificationDTO) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setType(notificationDTO.getType());
+        notification.setMessage(notificationDTO.getMessage());
+        notification.setOrderId(notificationDTO.getOrderId());
+
+        notificationRepository.save(notification);
+    }
+
+    @Override
     public boolean isOrderOwner(Long orderId, String username) {
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         return orderOptional.map(order -> order.getUser().getUsername().equals(username)).orElse(false);
     }
+        @Override
+    @Transactional
+    public Order acceptOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + id));
+
+        // Only allow acceptance if order is in NEW status
+        if (!"NEW".equals(order.getStatus())) {
+            throw new IllegalStateException("Can only accept orders in NEW status. Current status: " + order.getStatus());
+        }
+
+        // Update order status to ACCEPTED
+        order.setStatus("ACCEPTED");
+        return orderRepository.save(order);
+    }
+
     @Override
     public List<Order> getCurrentUserOrders() {
         // Get current authenticated user
@@ -355,6 +384,7 @@ public class OrderServiceImpl implements OrderService {
 
         return orderRepository.findByUser(user);
     }
+
     // Helper methods
     private double calculateTotalAmount(OrderDTO orderDTO) {
         return orderDTO.getItems().stream()
@@ -375,10 +405,6 @@ public class OrderServiceImpl implements OrderService {
         return item;
     }
 
-    /**
-     * Restores stock quantities for all items in an order
-     * Used when cancelling or deleting an order
-     */
     private void restoreStockQuantities(Order order) {
         for (OrderItem item : order.getItems()) {
             Product product = item.getProduct();

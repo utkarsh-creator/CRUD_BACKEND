@@ -58,6 +58,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @RestController
 @RequestMapping("/api/products")
@@ -73,6 +75,38 @@ public class ProductController {
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(productService.getAllProducts(pageable));
+    }
+
+        @PostMapping("/get/{id}")
+    public ResponseEntity<ProductDTO> getProductById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        ProductDTO product = productService.getProductById(id);
+        
+        // Remove stock quantity for non-admin users
+        if (!userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            product.setStockQuantity(null);
+        }
+        
+        return ResponseEntity.ok(product);
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductDTO> products = productService.getAllProducts(pageable);
+        
+        // Remove stock quantity for non-admin users
+        if (!userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            products.getContent().forEach(p -> p.setStockQuantity(null));
+        }
+        
+        return ResponseEntity.ok(products);
     }
 
     // ✅ ADDED: Search functionality for products

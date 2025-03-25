@@ -32,6 +32,11 @@ public class UserServiceImpl implements UserService {
     private OrderService orderService;
 
 
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
+    }
     @Override
     @Transactional
     public User registerUser(RegisterRequest registerRequest) {

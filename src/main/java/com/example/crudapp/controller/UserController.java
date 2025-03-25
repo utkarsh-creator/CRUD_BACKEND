@@ -41,16 +41,19 @@
 //}
 package com.example.crudapp.controller;
 
-import com.example.crudapp.dto.PasswordChangeRequest;
-import com.example.crudapp.dto.RegisterRequest;
+import com.example.crudapp.dto.NotificationRequest;  // Add this import
+import com.example.crudapp.service.NotificationService;  // Add this import
+import com.example.crudapp.model.User;
 import com.example.crudapp.dto.UserDTO;
 import com.example.crudapp.dto.UserProfileDTO;
-import com.example.crudapp.model.Order;
-import com.example.crudapp.model.User;
-import com.example.crudapp.service.OrderService;
+import com.example.crudapp.dto.PasswordChangeRequest;
+import com.example.crudapp.dto.RegisterRequest;
 import com.example.crudapp.service.UserService;
+import com.example.crudapp.service.OrderService;
+import com.example.crudapp.model.Order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,9 +61,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -68,11 +69,34 @@ public class UserController {
 
     private final UserService userService;
     private final OrderService orderService;
+    private final NotificationService notificationService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody RegisterRequest request) {
         User registeredUser = userService.registerUser(request);
         return ResponseEntity.ok(new UserDTO(registeredUser));
+    }
+    @GetMapping("/users/username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        try {
+            User user = userService.findByUsername(username);
+            if (user == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/users/{userId}/notifications")
+    public ResponseEntity<?> notifyUser(@PathVariable Long userId, @RequestBody NotificationRequest request) {
+        try {
+            notificationService.createNotification(userId, request.getMessage());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/me")

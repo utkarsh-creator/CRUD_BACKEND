@@ -1,6 +1,7 @@
 package com.example.crudapp.service;
 
 import com.example.crudapp.dto.OrderDTO;
+import com.example.crudapp.dto.NotificationDTO;
 import com.example.crudapp.model.Order;
 import com.example.crudapp.repository.OrderRepository;
 
@@ -13,9 +14,9 @@ public interface OrderService {
 
     List<Order> getAllOrders();
 
-
+    void notifyUser(Long userId, NotificationDTO notificationDTO);
     List<Order> getAllOrders(int page, int limit);
-
+Order acceptOrder(Long id);
     List<Order> getOrdersByUserId(Long userId);
 
     List<Order> getCurrentUserOrders();

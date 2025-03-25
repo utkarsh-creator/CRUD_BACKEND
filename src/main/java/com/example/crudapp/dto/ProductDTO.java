@@ -1,5 +1,6 @@
 package com.example.crudapp.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -16,13 +17,14 @@ public class ProductDTO {
     @NotBlank(message = "Product name is required")
     private String name;
 
-    private String description; // Added description field
+    private String description;
 
     @NotNull(message = "Price is required")
     @Positive(message = "Price must be positive")
     private double price;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull(message = "Stock quantity is required")
     @Positive(message = "Stock quantity must be positive")
-    private Integer stockQuantity; // Added stock quantity validation
+    private Integer stockQuantity;
 }

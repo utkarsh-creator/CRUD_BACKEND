@@ -19,6 +19,7 @@ public interface UserService {
     void changeUserPassword(Long id, String currentPassword, String newPassword);
     User updateUserRole(Long id, String role);
     void deleteUser(Long id);
+    User findByUsername(String username);
     // In UserService.java
     List<Order> findOrdersByUserId(Long userId);  // Add this method to the interface
 }
